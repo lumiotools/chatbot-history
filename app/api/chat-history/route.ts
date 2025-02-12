@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
     // Transform message _ids if they exist
     if (Array.isArray(transformedChatHistory.messages)) {
-      transformedChatHistory.messages = transformedChatHistory.messages.map((message: any) => ({
+      transformedChatHistory.messages = transformedChatHistory.messages.map((message: { _id?: mongoose.Types.ObjectId }) => ({
         ...message,
         _id: message._id ? message._id.toString() : undefined
       }))
