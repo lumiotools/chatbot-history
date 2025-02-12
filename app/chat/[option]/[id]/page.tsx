@@ -87,16 +87,16 @@ export default function ChatHistory() {
                       <ReactMarkdown
                         className="prose prose-sm max-w-none"
                         components={{
-                          p: ({ node, ...props }) => (
+                          p: ({ ...props }) => (
                             <p className="text-gray-800" {...props} />
                           ),
-                          h1: ({ node, ...props }) => (
+                          h1: ({ ...props }) => (
                             <h1 className="text-xl font-bold" {...props} />
                           ),
-                          h2: ({ node, ...props }) => (
+                          h2: ({ ...props }) => (
                             <h2 className="text-lg font-bold" {...props} />
                           ),
-                          code: ({ node, ...props }) => (
+                          code: ({ ...props }) => (
                             <code
                               className="bg-gray-100 rounded px-1"
                               {...props}
@@ -118,22 +118,22 @@ export default function ChatHistory() {
                               <ReactMarkdown
                                 className="prose prose-sm max-w-none"
                                 components={{
-                                  p: ({ node, ...props }) => (
+                                  p: ({ ...props }) => (
                                     <p className="text-gray-800" {...props} />
                                   ),
-                                  h1: ({ node, ...props }) => (
+                                  h1: ({ ...props }) => (
                                     <h1
                                       className="text-xl font-bold"
                                       {...props}
                                     />
                                   ),
-                                  h2: ({ node, ...props }) => (
+                                  h2: ({ ...props }) => (
                                     <h2
                                       className="text-lg font-bold"
                                       {...props}
                                     />
                                   ),
-                                  code: ({ node, ...props }) => (
+                                  code: ({ ...props }) => (
                                     <code
                                       className="bg-gray-100 rounded px-1"
                                       {...props}
