@@ -6,24 +6,6 @@ import CitizenReportingChatHistory from '@/models/CitizenReportingChatHistory'
 const NAMAMI_GANGE_DB_URL = process.env.NAMAMI_GANGE_DB_URL
 const CITIZEN_REPORTING_DB_URL = process.env.CITIZEN_REPORTING_DB_URL
 
-async function getIpDetails(ip: string) {
-  try {
-    const response = await fetch(`http://ip-api.com/json/${ip}`)
-    const data = await response.json()
-    if (data.status === 'success') {
-      return {
-        country: data.country,
-        region: data.region,
-        city: data.city,
-        zip: data.zip
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching IP details:', error)
-  }
-  return null
-}
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const option = searchParams.get('option')
@@ -47,21 +29,9 @@ export async function GET(request: NextRequest) {
 
   try {
     await mongoose.connect(dbUrl)
-    const chatEntities = await ChatHistoryModel.find({}, 'userIP createdAt').sort({ createdAt: -1 }).lean()
+    const chatEntities = await ChatHistoryModel.find({}, 'userIP createdAt').sort({ createdAt: -1 })
 
-    const entitiesWithIpDetails = await Promise.all(
-      chatEntities.map(async (entity) => {
-        const ipDetails = await getIpDetails(entity.userIP)
-        return {
-          ...entity,
-          _id: (entity._id as string).toString(),
-          createdAt: entity.createdAt.toISOString(),
-          ipDetails
-        }
-      })
-    )
-
-    return NextResponse.json({ entities: entitiesWithIpDetails })
+    return NextResponse.json({ entities: chatEntities })
   } catch (error) {
     console.error('Error fetching chat entities:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

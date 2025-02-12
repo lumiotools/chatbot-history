@@ -30,13 +30,28 @@ export async function GET(request: NextRequest) {
 
   try {
     await mongoose.connect(dbUrl)
-    const chatHistory = await ChatHistoryModel.findById(id)
+    
+    const chatHistory = await ChatHistoryModel.findById(id).lean()
 
     if (!chatHistory) {
       return NextResponse.json({ error: 'Chat history not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ messages: chatHistory.messages })
+    // Transform the MongoDB document to a plain JavaScript object
+    const transformedChatHistory = JSON.parse(JSON.stringify(chatHistory))
+
+    // Ensure _id is a string
+    transformedChatHistory._id = transformedChatHistory._id.toString()
+
+    // Transform message _ids if they exist
+    if (Array.isArray(transformedChatHistory.messages)) {
+      transformedChatHistory.messages = transformedChatHistory.messages.map((message: any) => ({
+        ...message,
+        _id: message._id ? message._id.toString() : undefined
+      }))
+    }
+
+    return NextResponse.json(transformedChatHistory)
   } catch (error) {
     console.error('Error fetching chat history:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
