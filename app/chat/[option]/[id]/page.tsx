@@ -4,19 +4,26 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import Header from "@/components/header";
+import { PdfViewerModal } from "@/components/pdf-viewer-model";
 
 interface Message {
   role: string;
   content:
     | string
     | { type: string; text?: string; image_url?: { url: string } }[];
+  sources?: number[];
 }
+
+// Replace this with your actual PDF URL
+const SOLIX_PDF_URL = "https://solix-chatbot.vercel.app/manual.pdf";
 
 export default function ChatHistory() {
   const params = useParams();
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+  const [currentPdfPage, setCurrentPdfPage] = useState(1);
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -53,6 +60,11 @@ export default function ChatHistory() {
     }
   };
 
+  const openPdfAtPage = (pageNumber: number) => {
+    setCurrentPdfPage(pageNumber);
+    setIsPdfModalOpen(true);
+  };
+
   return (
     <div>
       <Header
@@ -84,28 +96,50 @@ export default function ChatHistory() {
                   </div>
                   {typeof message.content === "string" ? (
                     message.role === "assistant" ? (
-                      <ReactMarkdown
-                        className="prose prose-sm max-w-none"
-                        components={{
-                          p: ({ ...props }) => (
-                            <p className="text-gray-800" {...props} />
-                          ),
-                          h1: ({ ...props }) => (
-                            <h1 className="text-xl font-bold" {...props} />
-                          ),
-                          h2: ({ ...props }) => (
-                            <h2 className="text-lg font-bold" {...props} />
-                          ),
-                          code: ({ ...props }) => (
-                            <code
-                              className="bg-gray-100 rounded px-1"
-                              {...props}
-                            />
-                          ),
-                        }}
-                      >
-                        {message.content}
-                      </ReactMarkdown>
+                      <>
+                        <ReactMarkdown
+                          className="prose prose-sm max-w-none"
+                          components={{
+                            p: ({ ...props }) => (
+                              <p className="text-gray-800" {...props} />
+                            ),
+                            h1: ({ ...props }) => (
+                              <h1 className="text-xl font-bold" {...props} />
+                            ),
+                            h2: ({ ...props }) => (
+                              <h2 className="text-lg font-bold" {...props} />
+                            ),
+                            code: ({ ...props }) => (
+                              <code
+                                className="bg-gray-100 rounded px-1"
+                                {...props}
+                              />
+                            ),
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                        {message.role === "assistant" &&
+                          message.sources &&
+                          message.sources.length > 0 && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              Sources:{" "}
+                              {message.sources.map((source, index) => (
+                                <span key={index}>
+                                  <button
+                                    onClick={() => openPdfAtPage(source)}
+                                    className="text-[#E31837] hover:underline"
+                                  >
+                                    Page {source}
+                                  </button>
+                                  {index < message.sources!.length - 1
+                                    ? ", "
+                                    : ""}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                      </>
                     ) : (
                       <p className="text-gray-800">{message.content}</p>
                     )
@@ -115,34 +149,36 @@ export default function ChatHistory() {
                         <div key={contentIndex}>
                           {content.type === "text" &&
                             (message.role === "assistant" ? (
-                              <ReactMarkdown
-                                className="prose prose-sm max-w-none"
-                                components={{
-                                  p: ({ ...props }) => (
-                                    <p className="text-gray-800" {...props} />
-                                  ),
-                                  h1: ({ ...props }) => (
-                                    <h1
-                                      className="text-xl font-bold"
-                                      {...props}
-                                    />
-                                  ),
-                                  h2: ({ ...props }) => (
-                                    <h2
-                                      className="text-lg font-bold"
-                                      {...props}
-                                    />
-                                  ),
-                                  code: ({ ...props }) => (
-                                    <code
-                                      className="bg-gray-100 rounded px-1"
-                                      {...props}
-                                    />
-                                  ),
-                                }}
-                              >
-                                {content.text || ""}
-                              </ReactMarkdown>
+                              <>
+                                <ReactMarkdown
+                                  className="prose prose-sm max-w-none"
+                                  components={{
+                                    p: ({ ...props }) => (
+                                      <p className="text-gray-800" {...props} />
+                                    ),
+                                    h1: ({ ...props }) => (
+                                      <h1
+                                        className="text-xl font-bold"
+                                        {...props}
+                                      />
+                                    ),
+                                    h2: ({ ...props }) => (
+                                      <h2
+                                        className="text-lg font-bold"
+                                        {...props}
+                                      />
+                                    ),
+                                    code: ({ ...props }) => (
+                                      <code
+                                        className="bg-gray-100 rounded px-1"
+                                        {...props}
+                                      />
+                                    ),
+                                  }}
+                                >
+                                  {content.text || ""}
+                                </ReactMarkdown>
+                              </>
                             ) : (
                               <p className="text-gray-800">{content.text}</p>
                             ))}
@@ -166,6 +202,12 @@ export default function ChatHistory() {
           </div>
         )}
       </div>
+      <PdfViewerModal
+        isOpen={isPdfModalOpen}
+        onClose={() => setIsPdfModalOpen(false)}
+        pdfUrl={SOLIX_PDF_URL}
+        pageNumber={currentPdfPage}
+      />
     </div>
   );
 }

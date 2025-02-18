@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import mongoose from 'mongoose'
 import NamamiGangeChatHistory from '@/models/NamamiGangeChatHistory'
 import CitizenReportingChatHistory from '@/models/CitizenReportingChatHistory'
+import SolixChatHistory from '@/models/SolixChatHistory'
 
 const NAMAMI_GANGE_DB_URL = process.env.NAMAMI_GANGE_DB_URL
 const CITIZEN_REPORTING_DB_URL = process.env.CITIZEN_REPORTING_DB_URL
+const SOLIX_DB_URL = process.env.SOLIX_DB_URL
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -16,7 +18,7 @@ export async function GET(request: NextRequest) {
   }
 
   let dbUrl: string
-  let ChatHistoryModel: typeof NamamiGangeChatHistory | typeof CitizenReportingChatHistory
+  let ChatHistoryModel: typeof NamamiGangeChatHistory | typeof CitizenReportingChatHistory | typeof SolixChatHistory
 
   if (option === 'namami-gange') {
     dbUrl = NAMAMI_GANGE_DB_URL!
@@ -24,6 +26,9 @@ export async function GET(request: NextRequest) {
   } else if (option === 'citizen-reporting') {
     dbUrl = CITIZEN_REPORTING_DB_URL!
     ChatHistoryModel = CitizenReportingChatHistory
+  } else if (option === 'solix') {
+    dbUrl = SOLIX_DB_URL!
+    ChatHistoryModel = SolixChatHistory
   } else {
     return NextResponse.json({ error: 'Invalid option' }, { status: 400 })
   }

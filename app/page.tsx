@@ -18,10 +18,10 @@ export default function Home() {
             href="/chat/namami-gange"
             className="block transition-transform hover:scale-105"
           >
-            <Card className="h-full cursor-pointer hover:border-blue-400">
+            <Card className="h-full cursor-pointer hover:border-green-400">
               <CardHeader className="flex flex-col items-center text-center p-6">
-                <div className="p-3 bg-blue-100 rounded-full mb-4">
-                  <Waves className="w-8 h-8 text-blue-600" />
+                <div className="p-3 bg-green-100 rounded-full mb-4">
+                  <Waves className="w-8 h-8 text-green-600" />
                 </div>
                 <CardTitle className="text-2xl mb-2">
                   Namami Gange Programme
@@ -30,7 +30,7 @@ export default function Home() {
                   View chat histories related to the Namami Gange Programme and
                   river conservation efforts
                 </CardDescription>
-                <div className="mt-4 flex items-center text-blue-600">
+                <div className="mt-4 flex items-center text-green-600">
                   View Chats <ArrowRight className="ml-2 w-4 h-4" />
                 </div>
               </CardHeader>
@@ -41,10 +41,10 @@ export default function Home() {
             href="/chat/citizen-reporting"
             className="block transition-transform hover:scale-105"
           >
-            <Card className="h-full cursor-pointer hover:border-green-400">
+            <Card className="h-full cursor-pointer hover:border-purple-400">
               <CardHeader className="flex flex-col items-center text-center p-6">
-                <div className="p-3 bg-green-100 rounded-full mb-4">
-                  <Users className="w-8 h-8 text-green-600" />
+                <div className="p-3 bg-purple-100 rounded-full mb-4">
+                  <Users className="w-8 h-8 text-purple-600" />
                 </div>
                 <CardTitle className="text-2xl mb-2">
                   Citizen Reporting
@@ -53,7 +53,29 @@ export default function Home() {
                   Access chat histories for citizen reports and community
                   engagement
                 </CardDescription>
-                <div className="mt-4 flex items-center text-green-600">
+                <div className="mt-4 flex items-center text-purple-600">
+                  View Chats <ArrowRight className="ml-2 w-4 h-4" />
+                </div>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link
+            href="/chat/solix"
+            className="block transition-transform hover:scale-105"
+          >
+            <Card className="h-full cursor-pointer hover:border-red-400">
+              <CardHeader className="flex flex-col items-center text-center p-6">
+                <div className="p-3 bg-red-100 rounded-full mb-4">
+                  <Users className="w-8 h-8 text-red-600" />
+                </div>
+                <CardTitle className="text-2xl mb-2">
+                  Solix Chatbot
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Access chat histories for solix chatbot
+                </CardDescription>
+                <div className="mt-4 flex items-center text-red-600">
                   View Chats <ArrowRight className="ml-2 w-4 h-4" />
                 </div>
               </CardHeader>
