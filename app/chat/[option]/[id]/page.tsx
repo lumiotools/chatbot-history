@@ -5,13 +5,23 @@ import { useParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import Header from "@/components/header";
 import { PdfViewerModal } from "@/components/pdf-viewer-model";
+import { BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   role: string;
   content:
     | string
     | { type: string; text?: string; image_url?: { url: string } }[];
-  sources?: number[];
+  sources?: { page: number; snippet: string }[];
 }
 
 // Replace this with your actual PDF URL
@@ -24,6 +34,7 @@ export default function ChatHistory() {
   const [error, setError] = useState<string | null>(null);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
+  const [currentSnippet, setCurrentSnippet] = useState("");
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -60,9 +71,15 @@ export default function ChatHistory() {
     }
   };
 
-  const openPdfAtPage = (pageNumber: number) => {
+  const openPdfAtPage = (pageNumber: number, snippet: string) => {
     setCurrentPdfPage(pageNumber);
+    setCurrentSnippet(snippet);
     setIsPdfModalOpen(true);
+  };
+
+  const truncateSnippet = (snippet: string, maxLength = 100) => {
+    if (snippet.length <= maxLength) return snippet;
+    return snippet.slice(0, maxLength) + "...";
   };
 
   return (
@@ -122,21 +139,51 @@ export default function ChatHistory() {
                         {message.role === "assistant" &&
                           message.sources &&
                           message.sources.length > 0 && (
-                            <div className="text-xs text-gray-500 mt-1">
-                              Sources:{" "}
-                              {message.sources.map((source, index) => (
-                                <span key={index}>
-                                  <button
-                                    onClick={() => openPdfAtPage(source)}
-                                    className="text-[#E31837] hover:underline"
-                                  >
-                                    Page {source}
-                                  </button>
-                                  {index < message.sources!.length - 1
-                                    ? ", "
-                                    : ""}
-                                </span>
-                              ))}
+                            <div className="text-xs text-gray-500 mt-2 space-y-2">
+                              <div className="flex items-center gap-1 font-semibold text-gray-600">
+                                <BookOpen className="w-4 h-4" />
+                                <span>Sources:</span>
+                              </div>
+                              <div className="grid grid-cols-1 gap-2">
+                                {message.sources.map((source, index) => (
+                                  <TooltipProvider key={index}>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() =>
+                                            openPdfAtPage(
+                                              source.page,
+                                              source.snippet
+                                            )
+                                          }
+                                          className="w-full justify-start text-left font-normal text-sm"
+                                        >
+                                          <Badge
+                                            variant="secondary"
+                                            className="mr-2 text-blue-600"
+                                          >
+                                            Page {source.page}
+                                          </Badge>
+                                          {truncateSnippet(source.snippet, 50)}
+                                        </Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent
+                                        side="bottom"
+                                        className="max-w-md max-h-[40vh] overflow-y-auto p-4"
+                                      >
+                                        <ReactMarkdown
+                                          className="prose prose-sm max-w-none"
+                                          remarkPlugins={[remarkGfm]}
+                                        >
+                                          {source.snippet}
+                                        </ReactMarkdown>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                ))}
+                              </div>
                             </div>
                           )}
                       </>
@@ -207,6 +254,7 @@ export default function ChatHistory() {
         onClose={() => setIsPdfModalOpen(false)}
         pdfUrl={SOLIX_PDF_URL}
         pageNumber={currentPdfPage}
+        snippet={currentSnippet}
       />
     </div>
   );

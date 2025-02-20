@@ -12,7 +12,8 @@ const chatHistorySchema = new mongoose.Schema(
         content: String,
         sources: [
           {
-            type: Number,
+            page: Number,
+            snippet: String,
             _id: false,
           },
         ],
