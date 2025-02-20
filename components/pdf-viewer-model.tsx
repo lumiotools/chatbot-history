@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,9 +10,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Document, Page, pdfjs } from "react-pdf";
-import { useState } from "react";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
+import { Button } from "@/components/ui/button";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -31,6 +32,11 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
   snippet,
 }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(pageNumber);
+
+  useEffect(() => {
+    setCurrentPage(pageNumber);
+  }, [pageNumber]);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
@@ -48,29 +54,57 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
     return str;
   };
 
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= (numPages || 1)) {
+      setCurrentPage(newPage);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[90vw] max-h-[90vh] min-w-[50vw] min-h-[50vh] w-fit h-full">
+      <DialogContent className="max-w-[90vw] max-h-[80vh] min-w-[50vw] min-h-[80vh] w-fit h-full">
         <DialogHeader>
           <DialogTitle>Document Viewer</DialogTitle>
           <DialogDescription>
-            Page {pageNumber} of {numPages}
+            Page {currentPage} of {numPages}
           </DialogDescription>
         </DialogHeader>
-        <div className="h-full flex justify-center overflow-y-auto">
+        <div className="h-full flex flex-col items-center justify-between overflow-y-auto overflow-x-hidden">
           <Document
             file={pdfUrl}
             onLoadSuccess={onDocumentLoadSuccess}
-            className="w-fit"
+            className="flex-1"
           >
             <Page
-              className="!bg-transparent"
-              pageNumber={pageNumber}
+              pageNumber={currentPage}
+              className="!bg-transparent mb-4"
+              width={800}
               renderTextLayer={true}
               renderAnnotationLayer={true}
-              customTextRenderer={customTextRenderer}
+              customTextRenderer={
+                pageNumber === currentPage ? customTextRenderer : undefined
+              }
             />
           </Document>
+        </div>
+        <div className="flex justify-center items-center gap-4 mt-auto pt-4">
+          <Button
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage <= 1}
+          >
+            Previous
+          </Button>
+          <span>
+            Page {currentPage} of {numPages}
+          </span>
+          <Button
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= (numPages || 1)}
+          >
+            Next
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
