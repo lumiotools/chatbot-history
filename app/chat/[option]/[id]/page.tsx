@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import Header from "@/components/header";
 import { PdfViewerModal } from "@/components/pdf-viewer-model";
 import { BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -15,13 +15,19 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import remarkGfm from "remark-gfm";
+import Link from "next/link";
+import {
+  checkHellerFileTypePdf,
+  getHellerFileDirectUrl,
+  getHellerFileDriveUrl,
+} from "@/utils/heller_files";
 
 interface Message {
   role: string;
   content:
     | string
     | { type: string; text?: string; image_url?: { url: string } }[];
-  sources?: { page: number; snippet: string }[];
+  sources?: { page: number; snippet: string; fileName?: string }[];
 }
 
 // Replace this with your actual PDF URL
@@ -33,6 +39,7 @@ export default function ChatHistory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+  const [currentPdfUrl, setCurrentPdfUrl] = useState("");
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
   const [currentSnippet, setCurrentSnippet] = useState("");
 
@@ -66,12 +73,21 @@ export default function ChatHistory() {
         return "Namami Gange Chat";
       case "citizen-reporting":
         return "Citizen Report Chat";
+      case "solix":
+        return "Solix Chat";
+      case "heller":
+        return "Heller Chat";
       default:
         return "Chat History";
     }
   };
 
-  const openPdfAtPage = (pageNumber: number, snippet: string) => {
+  const openPdfAtPage = (
+    fileUrl: string,
+    pageNumber: number,
+    snippet: string
+  ) => {
+    setCurrentPdfUrl(fileUrl);
     setCurrentPdfPage(pageNumber);
     setCurrentSnippet(snippet);
     setIsPdfModalOpen(true);
@@ -148,27 +164,72 @@ export default function ChatHistory() {
                                 {message.sources.map((source, index) => (
                                   <TooltipProvider key={index}>
                                     <Tooltip>
+                                    <>
+                                          {source.fileName &&
+                                            params.option === "heller" && (
+                                              <Link
+                                                className={buttonVariants({
+                                                  variant: "link",
+                                                  className: "w-fit h-6 !py-0 -mb-1",
+                                                })}
+                                                href={
+                                                  getHellerFileDriveUrl(
+                                                    source.fileName
+                                                  ) as string
+                                                }
+                                                target="_blank"
+                                              >
+                                                {source.fileName}
+                                              </Link>
+                                            )}
                                       <TooltipTrigger asChild>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() =>
-                                            openPdfAtPage(
-                                              source.page,
-                                              source.snippet
-                                            )
-                                          }
-                                          className="w-full justify-start text-left font-normal text-sm"
-                                        >
-                                          <Badge
-                                            variant="secondary"
-                                            className="mr-2 text-blue-600"
+                                       
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => {
+                                              if (params.option === "heller") {
+                                                if (checkHellerFileTypePdf(source.fileName as string)) {
+                                                  openPdfAtPage(
+                                                    getHellerFileDirectUrl(
+                                                      source.fileName as string
+                                                    ),
+                                                    source.page,
+                                                    source.snippet
+                                                  );
+                                                } else {
+                                                  window.open(
+                                                    getHellerFileDriveUrl(
+                                                      source.fileName as string
+                                                    ) as string,
+                                                    "_blank"
+                                                  );
+                                                }
+                                               
+                                              } else {
+                                                openPdfAtPage(
+                                                  SOLIX_PDF_URL,
+                                                  source.page,
+                                                  source.snippet
+                                                );
+                                              }
+                                            }}
+                                            className="w-full justify-start text-left font-normal text-sm"
                                           >
-                                            Page {source.page}
-                                          </Badge>
-                                          {truncateSnippet(source.snippet, 50)}
-                                        </Button>
-                                      </TooltipTrigger>
+                                            <Badge
+                                              variant="secondary"
+                                              className="mr-2 text-blue-600"
+                                            >
+                                              Page {source.page}
+                                            </Badge>
+                                            {truncateSnippet(
+                                              source.snippet,
+                                              50
+                                            )}
+                                          </Button>
+                                 
+                                      </TooltipTrigger>       
+                                      </>
                                       <TooltipContent
                                         side="bottom"
                                         className="max-w-md max-h-[40vh] overflow-y-auto p-4"
@@ -252,7 +313,7 @@ export default function ChatHistory() {
       <PdfViewerModal
         isOpen={isPdfModalOpen}
         onClose={() => setIsPdfModalOpen(false)}
-        pdfUrl={SOLIX_PDF_URL}
+        pdfUrl={currentPdfUrl}
         pageNumber={currentPdfPage}
         snippet={currentSnippet}
       />

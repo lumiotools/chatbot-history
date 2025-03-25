@@ -41,6 +41,10 @@ export default function ChatList() {
         return 'Namami Gange Programme Chats'
       case 'citizen-reporting':
         return 'Citizen Reporting Chats'
+      case 'solix':
+        return 'Solix Chats'
+      case 'heller':
+        return 'Heller Chats'
       default:
         return 'Chat History'
     }

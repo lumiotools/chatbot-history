@@ -81,6 +81,28 @@ export default function Home() {
               </CardHeader>
             </Card>
           </Link>
+
+          <Link
+            href="/chat/heller"
+            className="block transition-transform hover:scale-105"
+          >
+            <Card className="h-full cursor-pointer hover:border-sky-400">
+              <CardHeader className="flex flex-col items-center text-center p-6">
+                <div className="p-3 bg-sky-100 rounded-full mb-4">
+                  <Users className="w-8 h-8 text-sky-600" />
+                </div>
+                <CardTitle className="text-2xl mb-2">
+                  Heller Chatbot
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Access chat histories for heller chatbot
+                </CardDescription>
+                <div className="mt-4 flex items-center text-sky-600">
+                  View Chats <ArrowRight className="ml-2 w-4 h-4" />
+                </div>
+              </CardHeader>
+            </Card>
+          </Link>
         </div>
       </main>
     </div>
