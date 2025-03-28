@@ -47,6 +47,11 @@ const hellerFilesMap = [
         "RFC-355  Reactor Catalyst Upgrade And Return Gas Into Flux Box.pdf",
       link: "https://drive.google.com/file/d/1PxlqRdSr4fqqlTKkxiIaophIfkIRDSld/view?usp=sharing",
     },
+    {
+      filename:
+        "RFC-398 Reactor Catalyst Remove Tooling (17).pdf",
+      link: "https://drive.google.com/file/d/1OxsvEUasqYWHiQPqPGe59hfATr2uXC7O/view?usp=sharing",
+    },
   ];
 
 export const getHellerFileDriveUrl = (fileName: string) => {
