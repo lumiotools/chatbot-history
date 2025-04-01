@@ -4,11 +4,13 @@ import NamamiGangeChatHistory from '@/models/NamamiGangeChatHistory'
 import CitizenReportingChatHistory from '@/models/CitizenReportingChatHistory'
 import SolixChatHistory from '@/models/SolixChatHistory'
 import HellerChatHistory from '@/models/HellerChatHistory'
+import PalomaChatHistory from '@/models/PalomaChatHistory'
 
 const NAMAMI_GANGE_DB_URL = process.env.NAMAMI_GANGE_DB_URL
 const CITIZEN_REPORTING_DB_URL = process.env.CITIZEN_REPORTING_DB_URL
 const SOLIX_DB_URL = process.env.SOLIX_DB_URL
 const HELLER_DB_URL = process.env.HELLER_DB_URL
+const PALOMA_DB_URL = process.env.PALOMA_DB_URL
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -34,6 +36,9 @@ export async function GET(request: NextRequest) {
   } else if (option === 'heller') {
     dbUrl = HELLER_DB_URL!
     ChatHistoryModel = HellerChatHistory
+  } else if (option === 'paloma') {
+    dbUrl = PALOMA_DB_URL!
+    ChatHistoryModel = PalomaChatHistory
   } else {
     return NextResponse.json({ error: 'Invalid option' }, { status: 400 })
   }

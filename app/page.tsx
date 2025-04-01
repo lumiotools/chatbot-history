@@ -13,7 +13,7 @@ export default function Home() {
     <div>
       <Header title="Chat History Dashboard" />
       <main className="container mx-auto p-4 min-h-[calc(100vh-64px)] flex flex-col items-center justify-center">
-        <div className="grid md:grid-cols-2 gap-6 w-full max-w-4xl">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-screen-xl">
           <Link
             href="/chat/namami-gange"
             className="block transition-transform hover:scale-105"
@@ -98,6 +98,28 @@ export default function Home() {
                   Access chat histories for heller chatbot
                 </CardDescription>
                 <div className="mt-4 flex items-center text-sky-600">
+                  View Chats <ArrowRight className="ml-2 w-4 h-4" />
+                </div>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link
+            href="/chat/paloma"
+            className="block transition-transform hover:scale-105"
+          >
+            <Card className="h-full cursor-pointer hover:border-yellow-400">
+              <CardHeader className="flex flex-col items-center text-center p-6">
+                <div className="p-3 bg-yellow-100 rounded-full mb-4">
+                  <Users className="w-8 h-8 text-yellow-600" />
+                </div>
+                <CardTitle className="text-2xl mb-2">
+                  Paloma Chatbot
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Access chat histories for paloma chatbot
+                </CardDescription>
+                <div className="mt-4 flex items-center text-yellow-600">
                   View Chats <ArrowRight className="ml-2 w-4 h-4" />
                 </div>
               </CardHeader>

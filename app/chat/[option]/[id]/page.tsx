@@ -77,6 +77,8 @@ export default function ChatHistory() {
         return "Solix Chat";
       case "heller":
         return "Heller Chat";
+      case "paloma":
+        return "Paloma Chat";
       default:
         return "Chat History";
     }

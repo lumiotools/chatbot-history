@@ -45,6 +45,8 @@ export default function ChatList() {
         return 'Solix Chats'
       case 'heller':
         return 'Heller Chats'
+      case 'paloma':
+        return 'Paloma Chats'
       default:
         return 'Chat History'
     }
